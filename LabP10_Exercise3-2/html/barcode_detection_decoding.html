@@ -1,0 +1,469 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>barcode_detection_decoding</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-11-19">
+<meta name="DC.source" content="barcode_detection_decoding.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">MATLAB Bar Code Detection and Decoding - Spencer Durrant</a>
+</li>
+<li>
+<a href="#3">e) Prove that the total width of a valid 12-digit bar code is equal to</a>
+</li>
+<li>
+<a href="#4">f) Next estimate theta1, must perform estimate for every subset of</a>
+</li>
+<li>
+<a href="#5">g) Now use estimated theta1 to convert delta_n into relative sizes</a>
+</li>
+<li>
+<a href="#6">h) Ready to decode using decodeUPC. Takes 59 integers only, call for</a>
+</li>
+</ul>
+</div>
+<h2 id="1">MATLAB Bar Code Detection and Decoding - Spencer Durrant</h2>
+<p>The UPC (Universal Product Code) uses widths of bars to encode numbers in a bar code. The UPC will have 30 black bars and 29 white bars for a total of 59. Bars are always alternating, and have four widths measured by the thinnest bar being 1 unit. Total width of the UPC bar code is 95 units.</p>
+<pre class="codeinput">
+<span class="keyword">function</span> [] = upcProcess(img_str, std_thresh)
+</pre>
+<pre class="codeinput">
+<span class="comment">% Read in typical bar code image</span>
+img = imread(img_str);
+[rows, cols] = size(img);
+middle = round(rows / 2);
+xn = img(middle, :);
+
+<span class="comment">% Filter signal with a first-difference FIR filter and plot</span>
+bb = [1, -1];
+yn = firfilt(bb, xn);
+
+figure;
+subplot(2, 1, 1);
+stem(xn, <span class="string">'filled'</span>);
+title(<span class="string">'x[n]'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'x[n]'</span>);
+
+subplot(2, 1, 2);
+stem(yn, <span class="string">'filled'</span>);
+title(<span class="string">'y[n]'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'y[n]'</span>);
+
+<span class="comment">% Create sparse detected signal d[n] by comparing magnitude |y[n]| to a</span>
+<span class="comment">% threshold</span>
+threshold = 128;
+dn = abs(yn) &gt; threshold;
+
+<span class="comment">% Then convert the sparse signal into a location signal l[n] by using find</span>
+ln = find(dn, cols, <span class="string">"first"</span>);
+figure;
+stem(ln, ones(size(ln)), <span class="string">'filled'</span>);
+title(<span class="string">'l[n]'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'l[n]'</span>);
+
+<span class="comment">% Apply a first-difference filter to location signal, call output delta_n.</span>
+<span class="comment">% These differences should be widths of the bars</span>
+delta_n = firfilt(bb, ln);
+delta_n = diff(ln);
+
+figure;
+subplot(2, 1, 1);
+stem(delta_n, <span class="string">'filled'</span>);
+title(<span class="string">'delta[n]'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'delta[n]'</span>);
+
+subplot(2, 1, 2);
+stem(ln, ones(size(ln)), <span class="string">'filled'</span>);
+title(<span class="string">'l[n]'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'l[n]'</span>);
+
+<span class="keyword">if</span> img_str == <span class="string">"HP110v3.png"</span>
+    disp(<span class="string">"In the delta[n] plot there are four distinct groupings: 6-9, 14-17, 24-26, and greater than 30."</span>)
+    disp(<span class="string">"Using intuition from the UPC standard, 30 / 4 rounded up will result in 8. So we can make a guess that a unit width is close to 8."</span>)
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">In the delta[n] plot there are four distinct groupings: 6-9, 14-17, 24-26, and greater than 30.
+Using intuition from the UPC standard, 30 / 4 rounded up will result in 8. So we can make a guess that a unit width is close to 8.
+</pre>
+<img vspace="5" hspace="5" src="barcode_detection_decoding_01.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_02.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_03.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_05.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_06.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_07.png" alt=""> <h2 id="3">e) Prove that the total width of a valid 12-digit bar code is equal to</h2>
+<p>95*theta1 where theta1 is the basic width. A: let the basic width be 1. Every digit must sum to 7, and there are 12 digits for 84 units. Then both the beginning and end are delimited with 1-1-1, and a middle separator of 1-1-1-1-1. This is another 3*theta1 + 3*theta1 + 5*theta1. Summing all these together is 84 + 3 + 3 + 5 = 95</p>
+<h2 id="4">f) Next estimate theta1, must perform estimate for every subset of</h2>
+<p>length 59 noting that ln and delta_n are greater than 59.</p>
+<pre class="codeinput">thetas = [];
+
+<span class="comment">% Find all potential theta1's for each possible sequence</span>
+<span class="keyword">for</span> i = 1:length(delta_n) - 58
+    sequence = delta_n(i:i+58);
+
+    <span class="comment">% Drop thetas with too high std</span>
+    sequence_std = std(sequence);
+    <span class="keyword">if</span> sequence_std &lt;= std_thresh
+        total_width = sum(sequence);
+        thetas = [thetas, total_width / 95];
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Plot potential theta1 values</span>
+figure;
+plot(thetas, <span class="string">'o-'</span>);
+title(<span class="string">'Potential Theta1 Values'</span>);
+xlabel(<span class="string">'Sequence Index'</span>);
+ylabel(<span class="string">'Potential Theta1'</span>);
+
+<span class="comment">% Calculate the mean theta</span>
+theta1 = mean(thetas);
+fprintf(<span class="string">"Mean Theta1: %.4f\n"</span>, theta1);
+</pre>
+<pre class="codeoutput">Mean Theta1: 8.1904
+</pre>
+<img vspace="5" hspace="5" src="barcode_detection_decoding_04.png" alt=""> <pre class="codeoutput">Mean Theta1: 2.7832
+</pre>
+<img vspace="5" hspace="5" src="barcode_detection_decoding_08.png" alt=""> <h2 id="5">g) Now use estimated theta1 to convert delta_n into relative sizes</h2>
+<p>result should be integers equal to 1, 2, 3, and 4</p>
+<pre class="codeinput">bar_code = round(delta_n / theta1);
+fprintf(<span class="string">"Verifying that the bar code is integers 1-4:\n"</span>);
+fprintf(<span class="string">"%d "</span>, bar_code.');
+fprintf(<span class="string">'\n'</span>);
+</pre>
+<pre class="codeoutput">Verifying that the bar code is integers 1-4:
+2 2 4 2 2 1 1 1 1 2 1 3 1 2 1 3 2 1 2 2 1 3 1 2 1 2 1 3 3 2 1 1 1 1 1 1 1 1 1 3 2 1 2 3 1 3 2 1 1 2 2 2 1 1 1 1 4 1 2 3 1 1 1 1 2 2 4 2 3 
+</pre>
+<pre class="codeoutput">Verifying that the bar code is integers 1-4:
+5 2 5 1 1 1 3 2 1 1 1 1 3 2 1 1 1 4 1 2 3 1 3 2 1 1 3 2 1 1 1 1 1 1 1 1 3 1 2 3 2 1 1 1 4 1 1 2 2 2 1 3 1 1 2 1 2 3 1 1 1 1 5 2 6 
+</pre>
+<h2 id="6">h) Ready to decode using decodeUPC. Takes 59 integers only, call for</h2>
+<p>each 59 element subset</p>
+<pre class="codeinput">upc_length = 59;
+<span class="comment">% Compute impulse response for 3 ones in a row then find first and last sum</span>
+<span class="comment">% to 3</span>
+h_ones = conv(double(bar_code == 1), [1 1 1], <span class="string">'valid'</span>);
+start_idx = find(h_ones == 3, 1, <span class="string">'first'</span>);
+end_idx = find(h_ones == 3, 1, <span class="string">'last'</span>) + 2;
+
+<span class="comment">% trim the bar code</span>
+bar_code = bar_code(start_idx:end_idx);
+fprintf(<span class="string">"Trimmed bar code:\n"</span>);
+fprintf(<span class="string">"%d "</span>, bar_code.');
+fprintf(<span class="string">'\n'</span>);
+
+valid_decode = [];
+
+<span class="keyword">if</span> length(bar_code) &gt; upc_length
+    valid_start_idx = [];
+
+    <span class="comment">% Sliding window through bar_code if length is still greater than 59</span>
+    <span class="keyword">for</span> i = 1:(length(bar_code) - upc_length + 1)
+        <span class="comment">% Extract the current 59-element subset</span>
+        subset = bar_code(i : i + upc_length - 1);
+
+        <span class="comment">% Decode the subset using decodeUPC</span>
+        decoded_digits = decodeUPC(subset);
+
+        <span class="comment">% Check for errors (no -1 in the output)</span>
+        <span class="keyword">if</span> all(decoded_digits ~= -1)
+            valid_decode = decoded_digits; <span class="comment">% Store the valid decode</span>
+            <span class="keyword">break</span>;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">else</span>
+    valid_decode = decodeUPC(bar_code);
+<span class="keyword">end</span>
+
+
+<span class="comment">% Display the result</span>
+<span class="keyword">if</span> ~isempty(valid_decode)
+    fprintf(<span class="string">"Bar code for image %s:\n"</span>, img_str);
+    disp(valid_decode);
+    <span class="keyword">if</span> img_str == <span class="string">"HP110v3.png"</span>
+        fprintf(<span class="string">"Expected bar code value is: 8 8 2 7 8 0 4 5 0 1 6 5\n\n"</span>);
+    <span class="keyword">end</span>
+<span class="keyword">else</span>
+    disp(<span class="string">'No valid decode found in the given data.'</span>);
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">Trimmed bar code:
+1 1 1 1 2 1 3 1 2 1 3 2 1 2 2 1 3 1 2 1 2 1 3 3 2 1 1 1 1 1 1 1 1 1 3 2 1 2 3 1 3 2 1 1 2 2 2 1 1 1 1 4 1 2 3 1 1 1 1 
+
+ssbeg =
+
+     1     1     1
+
+Bar code for image HP110v3.png:
+     8     8     2     7     8     0     4     5     0     1     6     5
+
+Expected bar code value is: 8 8 2 7 8 0 4 5 0 1 6 5
+
+</pre>
+<pre class="codeoutput">Trimmed bar code:
+1 1 1 3 2 1 1 1 1 3 2 1 1 1 4 1 2 3 1 3 2 1 1 3 2 1 1 1 1 1 1 1 1 3 1 2 3 2 1 1 1 4 1 1 2 2 2 1 3 1 1 2 1 2 3 1 1 1 1 
+
+ssbeg =
+
+     1     1     1
+
+Bar code for image OFFv3.png:
+     0     4     6     5     0     0     7     0     3     1     9     5
+
+</pre>
+<pre class="codeinput">
+<span class="keyword">end</span> <span class="comment">% function upcProcess</span>
+
+upcProcess(<span class="string">"HP110v3.png"</span>, 8);
+upcProcess(<span class="string">"OFFv3.png"</span>, 3);
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% MATLAB Bar Code Detection and Decoding - Spencer Durrant
+% The UPC (Universal Product Code) uses widths of bars to encode numbers in
+% a bar code. The UPC will have 30 black bars and 29 white bars for a
+% total of 59. Bars are always alternating, and have four widths
+% measured by the thinnest bar being 1 unit. Total width of the UPC bar
+% code is 95 units.
+
+function [] = upcProcess(img_str, std_thresh)
+% Read in typical bar code image
+img = imread(img_str);
+[rows, cols] = size(img);
+middle = round(rows / 2);
+xn = img(middle, :);
+
+% Filter signal with a first-difference FIR filter and plot
+bb = [1, -1];
+yn = firfilt(bb, xn);
+
+figure;
+subplot(2, 1, 1);
+stem(xn, 'filled');
+title('x[n]');
+xlabel('n');
+ylabel('x[n]');
+
+subplot(2, 1, 2);
+stem(yn, 'filled');
+title('y[n]');
+xlabel('n');
+ylabel('y[n]');
+
+% Create sparse detected signal d[n] by comparing magnitude |y[n]| to a
+% threshold
+threshold = 128;
+dn = abs(yn) > threshold;
+
+% Then convert the sparse signal into a location signal l[n] by using find
+ln = find(dn, cols, "first");
+figure;
+stem(ln, ones(size(ln)), 'filled');
+title('l[n]');
+xlabel('n');
+ylabel('l[n]');
+
+% Apply a first-difference filter to location signal, call output delta_n.
+% These differences should be widths of the bars
+delta_n = firfilt(bb, ln);
+delta_n = diff(ln);
+
+figure;
+subplot(2, 1, 1);
+stem(delta_n, 'filled');
+title('delta[n]');
+xlabel('n');
+ylabel('delta[n]');
+
+subplot(2, 1, 2);
+stem(ln, ones(size(ln)), 'filled');
+title('l[n]');
+xlabel('n');
+ylabel('l[n]');
+
+if img_str == "HP110v3.png"
+    disp("In the delta[n] plot there are four distinct groupings: 6-9, 14-17, 24-26, and greater than 30.")
+    disp("Using intuition from the UPC standard, 30 / 4 rounded up will result in 8. So we can make a guess that a unit width is close to 8.")
+end
+
+%% e) Prove that the total width of a valid 12-digit bar code is equal to
+% 95*theta1 where theta1 is the basic width. 
+% A: let the basic width be 1. Every digit must sum to 7, and there are 12 
+% digits for 84 units. Then both the beginning and end are delimited with 
+% 1-1-1, and a middle separator of 1-1-1-1-1. This is another 
+% 3*theta1 + 3*theta1 + 5*theta1. Summing all these together is 
+% 84 + 3 + 3 + 5 = 95
+
+%% f) Next estimate theta1, must perform estimate for every subset of 
+% length 59 noting that ln and delta_n are greater than 59.
+thetas = [];
+
+% Find all potential theta1's for each possible sequence
+for i = 1:length(delta_n) - 58
+    sequence = delta_n(i:i+58);
+
+    % Drop thetas with too high std
+    sequence_std = std(sequence);
+    if sequence_std <= std_thresh
+        total_width = sum(sequence);
+        thetas = [thetas, total_width / 95];
+    end
+end
+
+% Plot potential theta1 values
+figure;
+plot(thetas, 'o-');
+title('Potential Theta1 Values');
+xlabel('Sequence Index');
+ylabel('Potential Theta1');
+
+% Calculate the mean theta
+theta1 = mean(thetas);
+fprintf("Mean Theta1: %.4f\n", theta1);
+
+%% g) Now use estimated theta1 to convert delta_n into relative sizes
+% result should be integers equal to 1, 2, 3, and 4
+bar_code = round(delta_n / theta1);
+fprintf("Verifying that the bar code is integers 1-4:\n");
+fprintf("%d ", bar_code.');
+fprintf('\n');
+
+
+%% h) Ready to decode using decodeUPC. Takes 59 integers only, call for 
+% each 59 element subset
+
+upc_length = 59;
+% Compute impulse response for 3 ones in a row then find first and last sum
+% to 3
+h_ones = conv(double(bar_code == 1), [1 1 1], 'valid');
+start_idx = find(h_ones == 3, 1, 'first');
+end_idx = find(h_ones == 3, 1, 'last') + 2;
+
+% trim the bar code
+bar_code = bar_code(start_idx:end_idx);
+fprintf("Trimmed bar code:\n");
+fprintf("%d ", bar_code.');
+fprintf('\n');
+
+valid_decode = [];
+
+if length(bar_code) > upc_length
+    valid_start_idx = [];
+    
+    % Sliding window through bar_code if length is still greater than 59
+    for i = 1:(length(bar_code) - upc_length + 1)
+        % Extract the current 59-element subset
+        subset = bar_code(i : i + upc_length - 1);
+        
+        % Decode the subset using decodeUPC
+        decoded_digits = decodeUPC(subset);
+        
+        % Check for errors (no -1 in the output)
+        if all(decoded_digits ~= -1)
+            valid_decode = decoded_digits; % Store the valid decode
+            break; 
+        end
+    end
+else
+    valid_decode = decodeUPC(bar_code);
+end
+
+
+% Display the result
+if ~isempty(valid_decode)
+    fprintf("Bar code for image %s:\n", img_str);
+    disp(valid_decode);
+    if img_str == "HP110v3.png"
+        fprintf("Expected bar code value is: 8 8 2 7 8 0 4 5 0 1 6 5\n\n");
+    end
+else
+    disp('No valid decode found in the given data.');
+end
+
+end % function upcProcess
+
+upcProcess("HP110v3.png", 8);
+upcProcess("OFFv3.png", 3);
+##### SOURCE END #####
+-->
+</body>
+</html>
