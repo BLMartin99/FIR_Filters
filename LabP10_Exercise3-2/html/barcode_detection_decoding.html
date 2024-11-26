@@ -9,7 +9,7 @@ To make changes, update the MATLAB code and republish this document.
 <title>barcode_detection_decoding</title>
 <meta name="generator" content="MATLAB 24.1">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2024-11-19">
+<meta name="DC.date" content="2024-11-25">
 <meta name="DC.source" content="barcode_detection_decoding.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -83,16 +83,34 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <a href="#1">MATLAB Bar Code Detection and Decoding - Spencer Durrant</a>
 </li>
 <li>
-<a href="#3">e) Prove that the total width of a valid 12-digit bar code is equal to</a>
+<a href="#2">a) Read in typical bar code image, extract one row in the middle</a>
 </li>
 <li>
-<a href="#4">f) Next estimate theta1, must perform estimate for every subset of</a>
+<a href="#3">b) Filter signal with a first-difference FIR filter and stem plot</a>
 </li>
 <li>
-<a href="#5">g) Now use estimated theta1 to convert delta_n into relative sizes</a>
+<a href="#4">c) Create sparse detected signal d[n] by comparing magnitude <tt>y[n]</tt> to a</a>
 </li>
 <li>
-<a href="#6">h) Ready to decode using decodeUPC. Takes 59 integers only, call for</a>
+<a href="#5">d) Apply a first-difference filter to location signal, call output delta_n.</a>
+</li>
+<li>
+<a href="#6">e) Prove that the total width of a valid 12-digit bar code is equal to</a>
+</li>
+<li>
+<a href="#7">f) Next estimate theta1, must perform estimate for every subset of</a>
+</li>
+<li>
+<a href="#8">g) Now use estimated theta1 to convert delta_n into relative sizes</a>
+</li>
+<li>
+<a href="#9">h) Ready to decode using decodeUPC. Takes 59 integers only, call for</a>
+</li>
+<li>
+<a href="#10">i) Display the result, check that the HP110v3.png is correct by</a>
+</li>
+<li>
+<a href="#12">j) Process OFFv3.png</a>
 </li>
 </ul>
 </div>
@@ -101,58 +119,57 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <pre class="codeinput">
 <span class="keyword">function</span> [] = upcProcess(img_str, std_thresh)
 </pre>
-<pre class="codeinput">
-<span class="comment">% Read in typical bar code image</span>
-img = imread(img_str);
+<h2 id="2">a) Read in typical bar code image, extract one row in the middle</h2>
+<pre class="codeinput">img = imread(img_str);
 [rows, cols] = size(img);
 middle = round(rows / 2);
 xn = img(middle, :);
-
-<span class="comment">% Filter signal with a first-difference FIR filter and plot</span>
-bb = [1, -1];
+</pre>
+<h2 id="3">b) Filter signal with a first-difference FIR filter and stem plot</h2>
+<pre class="codeinput">bb = [1, -1];
 yn = firfilt(bb, xn);
 
 figure;
 subplot(2, 1, 1);
 stem(xn, <span class="string">'filled'</span>);
-title(<span class="string">'x[n]'</span>);
+title(<span class="string">'Barcode Input x[n]'</span>);
 xlabel(<span class="string">'n'</span>);
 ylabel(<span class="string">'x[n]'</span>);
 
 subplot(2, 1, 2);
 stem(yn, <span class="string">'filled'</span>);
-title(<span class="string">'y[n]'</span>);
+title(<span class="string">'Barcode FIR Filtered y[n]'</span>);
 xlabel(<span class="string">'n'</span>);
 ylabel(<span class="string">'y[n]'</span>);
-
-<span class="comment">% Create sparse detected signal d[n] by comparing magnitude |y[n]| to a</span>
-<span class="comment">% threshold</span>
-threshold = 128;
+</pre>
+<img vspace="5" hspace="5" src="barcode_detection_decoding_01.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_06.png" alt=""> <h2 id="4">c) Create sparse detected signal d[n] by comparing magnitude <tt>y[n]</tt> to a</h2>
+<p>threshold</p>
+<pre class="codeinput">threshold = 128;
 dn = abs(yn) &gt; threshold;
 
 <span class="comment">% Then convert the sparse signal into a location signal l[n] by using find</span>
 ln = find(dn, cols, <span class="string">"first"</span>);
 figure;
 stem(ln, ones(size(ln)), <span class="string">'filled'</span>);
-title(<span class="string">'l[n]'</span>);
+title(<span class="string">'Location Signal l[n]'</span>);
 xlabel(<span class="string">'n'</span>);
 ylabel(<span class="string">'l[n]'</span>);
-
-<span class="comment">% Apply a first-difference filter to location signal, call output delta_n.</span>
-<span class="comment">% These differences should be widths of the bars</span>
-delta_n = firfilt(bb, ln);
+</pre>
+<img vspace="5" hspace="5" src="barcode_detection_decoding_02.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_03.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_07.png" alt=""> <h2 id="5">d) Apply a first-difference filter to location signal, call output delta_n.</h2>
+<p>These differences should be widths of the bars</p>
+<pre class="codeinput">delta_n = firfilt(bb, ln);
 delta_n = diff(ln);
 
 figure;
 subplot(2, 1, 1);
 stem(delta_n, <span class="string">'filled'</span>);
-title(<span class="string">'delta[n]'</span>);
+title(<span class="string">'FIR Filter of Location Signal, delta[n]'</span>);
 xlabel(<span class="string">'n'</span>);
 ylabel(<span class="string">'delta[n]'</span>);
 
 subplot(2, 1, 2);
 stem(ln, ones(size(ln)), <span class="string">'filled'</span>);
-title(<span class="string">'l[n]'</span>);
+title(<span class="string">'Location Signal l[n]'</span>);
 xlabel(<span class="string">'n'</span>);
 ylabel(<span class="string">'l[n]'</span>);
 
@@ -164,9 +181,9 @@ ylabel(<span class="string">'l[n]'</span>);
 <pre class="codeoutput">In the delta[n] plot there are four distinct groupings: 6-9, 14-17, 24-26, and greater than 30.
 Using intuition from the UPC standard, 30 / 4 rounded up will result in 8. So we can make a guess that a unit width is close to 8.
 </pre>
-<img vspace="5" hspace="5" src="barcode_detection_decoding_01.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_02.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_03.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_05.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_06.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_07.png" alt=""> <h2 id="3">e) Prove that the total width of a valid 12-digit bar code is equal to</h2>
+<img vspace="5" hspace="5" src="barcode_detection_decoding_04.png" alt=""> <img vspace="5" hspace="5" src="barcode_detection_decoding_08.png" alt=""> <h2 id="6">e) Prove that the total width of a valid 12-digit bar code is equal to</h2>
 <p>95*theta1 where theta1 is the basic width. A: let the basic width be 1. Every digit must sum to 7, and there are 12 digits for 84 units. Then both the beginning and end are delimited with 1-1-1, and a middle separator of 1-1-1-1-1. This is another 3*theta1 + 3*theta1 + 5*theta1. Summing all these together is 84 + 3 + 3 + 5 = 95</p>
-<h2 id="4">f) Next estimate theta1, must perform estimate for every subset of</h2>
+<h2 id="7">f) Next estimate theta1, must perform estimate for every subset of</h2>
 <p>length 59 noting that ln and delta_n are greater than 59.</p>
 <pre class="codeinput">thetas = [];
 
@@ -195,9 +212,9 @@ fprintf(<span class="string">"Mean Theta1: %.4f\n"</span>, theta1);
 </pre>
 <pre class="codeoutput">Mean Theta1: 8.1904
 </pre>
-<img vspace="5" hspace="5" src="barcode_detection_decoding_04.png" alt=""> <pre class="codeoutput">Mean Theta1: 2.7832
+<img vspace="5" hspace="5" src="barcode_detection_decoding_05.png" alt=""> <pre class="codeoutput">Mean Theta1: 2.7832
 </pre>
-<img vspace="5" hspace="5" src="barcode_detection_decoding_08.png" alt=""> <h2 id="5">g) Now use estimated theta1 to convert delta_n into relative sizes</h2>
+<img vspace="5" hspace="5" src="barcode_detection_decoding_09.png" alt=""> <h2 id="8">g) Now use estimated theta1 to convert delta_n into relative sizes</h2>
 <p>result should be integers equal to 1, 2, 3, and 4</p>
 <pre class="codeinput">bar_code = round(delta_n / theta1);
 fprintf(<span class="string">"Verifying that the bar code is integers 1-4:\n"</span>);
@@ -210,7 +227,7 @@ fprintf(<span class="string">'\n'</span>);
 <pre class="codeoutput">Verifying that the bar code is integers 1-4:
 5 2 5 1 1 1 3 2 1 1 1 1 3 2 1 1 1 4 1 2 3 1 3 2 1 1 3 2 1 1 1 1 1 1 1 1 3 1 2 3 2 1 1 1 4 1 1 2 2 2 1 3 1 1 2 1 2 3 1 1 1 1 5 2 6 
 </pre>
-<h2 id="6">h) Ready to decode using decodeUPC. Takes 59 integers only, call for</h2>
+<h2 id="9">h) Ready to decode using decodeUPC. Takes 59 integers only, call for</h2>
 <p>each 59 element subset</p>
 <pre class="codeinput">upc_length = 59;
 <span class="comment">% Compute impulse response for 3 ones in a row then find first and last sum</span>
@@ -247,9 +264,26 @@ valid_decode = [];
 <span class="keyword">else</span>
     valid_decode = decodeUPC(bar_code);
 <span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">Trimmed bar code:
+1 1 1 1 2 1 3 1 2 1 3 2 1 2 2 1 3 1 2 1 2 1 3 3 2 1 1 1 1 1 1 1 1 1 3 2 1 2 3 1 3 2 1 1 2 2 2 1 1 1 1 4 1 2 3 1 1 1 1 
 
+ssbeg =
 
-<span class="comment">% Display the result</span>
+     1     1     1
+
+</pre>
+<pre class="codeoutput">Trimmed bar code:
+1 1 1 3 2 1 1 1 1 3 2 1 1 1 4 1 2 3 1 3 2 1 1 3 2 1 1 1 1 1 1 1 1 3 1 2 3 2 1 1 1 4 1 1 2 2 2 1 3 1 1 2 1 2 3 1 1 1 1 
+
+ssbeg =
+
+     1     1     1
+
+</pre>
+<h2 id="10">i) Display the result, check that the HP110v3.png is correct by</h2>
+<p>looking at the barcode digits at the bottom.</p>
+<pre class="codeinput">
 <span class="keyword">if</span> ~isempty(valid_decode)
     fprintf(<span class="string">"Bar code for image %s:\n"</span>, img_str);
     disp(valid_decode);
@@ -260,35 +294,23 @@ valid_decode = [];
     disp(<span class="string">'No valid decode found in the given data.'</span>);
 <span class="keyword">end</span>
 </pre>
-<pre class="codeoutput">Trimmed bar code:
-1 1 1 1 2 1 3 1 2 1 3 2 1 2 2 1 3 1 2 1 2 1 3 3 2 1 1 1 1 1 1 1 1 1 3 2 1 2 3 1 3 2 1 1 2 2 2 1 1 1 1 4 1 2 3 1 1 1 1 
-
-ssbeg =
-
-     1     1     1
-
-Bar code for image HP110v3.png:
+<pre class="codeoutput">Bar code for image HP110v3.png:
      8     8     2     7     8     0     4     5     0     1     6     5
 
 Expected bar code value is: 8 8 2 7 8 0 4 5 0 1 6 5
 
 </pre>
-<pre class="codeoutput">Trimmed bar code:
-1 1 1 3 2 1 1 1 1 3 2 1 1 1 4 1 2 3 1 3 2 1 1 3 2 1 1 1 1 1 1 1 1 3 1 2 3 2 1 1 1 4 1 1 2 2 2 1 3 1 1 2 1 2 3 1 1 1 1 
-
-ssbeg =
-
-     1     1     1
-
-Bar code for image OFFv3.png:
+<pre class="codeoutput">Bar code for image OFFv3.png:
      0     4     6     5     0     0     7     0     3     1     9     5
 
 </pre>
 <pre class="codeinput">
-<span class="keyword">end</span> <span class="comment">% function upcProcess</span>
+<span class="keyword">end</span> <span class="comment">% function</span>
 
 upcProcess(<span class="string">"HP110v3.png"</span>, 8);
-upcProcess(<span class="string">"OFFv3.png"</span>, 3);
+</pre>
+<h2 id="12">j) Process OFFv3.png</h2>
+<pre class="codeinput">upcProcess(<span class="string">"OFFv3.png"</span>, 3);
 </pre>
 <p class="footer">
 <br>
@@ -306,30 +328,30 @@ upcProcess(<span class="string">"OFFv3.png"</span>, 3);
 % code is 95 units.
 
 function [] = upcProcess(img_str, std_thresh)
-% Read in typical bar code image
+%% a) Read in typical bar code image, extract one row in the middle
 img = imread(img_str);
 [rows, cols] = size(img);
 middle = round(rows / 2);
 xn = img(middle, :);
 
-% Filter signal with a first-difference FIR filter and plot
+%% b) Filter signal with a first-difference FIR filter and stem plot
 bb = [1, -1];
 yn = firfilt(bb, xn);
 
 figure;
 subplot(2, 1, 1);
 stem(xn, 'filled');
-title('x[n]');
+title('Barcode Input x[n]');
 xlabel('n');
 ylabel('x[n]');
 
 subplot(2, 1, 2);
 stem(yn, 'filled');
-title('y[n]');
+title('Barcode FIR Filtered y[n]');
 xlabel('n');
 ylabel('y[n]');
 
-% Create sparse detected signal d[n] by comparing magnitude |y[n]| to a
+%% c) Create sparse detected signal d[n] by comparing magnitude |y[n]| to a
 % threshold
 threshold = 128;
 dn = abs(yn) > threshold;
@@ -338,11 +360,11 @@ dn = abs(yn) > threshold;
 ln = find(dn, cols, "first");
 figure;
 stem(ln, ones(size(ln)), 'filled');
-title('l[n]');
+title('Location Signal l[n]');
 xlabel('n');
 ylabel('l[n]');
 
-% Apply a first-difference filter to location signal, call output delta_n.
+%% d) Apply a first-difference filter to location signal, call output delta_n.
 % These differences should be widths of the bars
 delta_n = firfilt(bb, ln);
 delta_n = diff(ln);
@@ -350,13 +372,13 @@ delta_n = diff(ln);
 figure;
 subplot(2, 1, 1);
 stem(delta_n, 'filled');
-title('delta[n]');
+title('FIR Filter of Location Signal, delta[n]');
 xlabel('n');
 ylabel('delta[n]');
 
 subplot(2, 1, 2);
 stem(ln, ones(size(ln)), 'filled');
-title('l[n]');
+title('Location Signal l[n]');
 xlabel('n');
 ylabel('l[n]');
 
@@ -448,7 +470,8 @@ else
 end
 
 
-% Display the result
+%% i) Display the result, check that the HP110v3.png is correct by
+% looking at the barcode digits at the bottom.
 if ~isempty(valid_decode)
     fprintf("Bar code for image %s:\n", img_str);
     disp(valid_decode);
@@ -459,9 +482,10 @@ else
     disp('No valid decode found in the given data.');
 end
 
-end % function upcProcess
+end % function
 
 upcProcess("HP110v3.png", 8);
+%% j) Process OFFv3.png
 upcProcess("OFFv3.png", 3);
 ##### SOURCE END #####
 -->

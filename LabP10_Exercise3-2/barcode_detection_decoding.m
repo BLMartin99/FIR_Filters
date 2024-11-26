@@ -6,30 +6,30 @@
 % code is 95 units.
 
 function [] = upcProcess(img_str, std_thresh)
-% Read in typical bar code image
+%% a) Read in typical bar code image, extract one row in the middle
 img = imread(img_str);
 [rows, cols] = size(img);
 middle = round(rows / 2);
 xn = img(middle, :);
 
-% Filter signal with a first-difference FIR filter and plot
+%% b) Filter signal with a first-difference FIR filter and stem plot
 bb = [1, -1];
 yn = firfilt(bb, xn);
 
 figure;
 subplot(2, 1, 1);
 stem(xn, 'filled');
-title('x[n]');
+title('Barcode Input x[n]');
 xlabel('n');
 ylabel('x[n]');
 
 subplot(2, 1, 2);
 stem(yn, 'filled');
-title('y[n]');
+title('Barcode FIR Filtered y[n]');
 xlabel('n');
 ylabel('y[n]');
 
-% Create sparse detected signal d[n] by comparing magnitude |y[n]| to a
+%% c) Create sparse detected signal d[n] by comparing magnitude |y[n]| to a
 % threshold
 threshold = 128;
 dn = abs(yn) > threshold;
@@ -38,11 +38,11 @@ dn = abs(yn) > threshold;
 ln = find(dn, cols, "first");
 figure;
 stem(ln, ones(size(ln)), 'filled');
-title('l[n]');
+title('Location Signal l[n]');
 xlabel('n');
 ylabel('l[n]');
 
-% Apply a first-difference filter to location signal, call output delta_n.
+%% d) Apply a first-difference filter to location signal, call output delta_n.
 % These differences should be widths of the bars
 delta_n = firfilt(bb, ln);
 delta_n = diff(ln);
@@ -50,13 +50,13 @@ delta_n = diff(ln);
 figure;
 subplot(2, 1, 1);
 stem(delta_n, 'filled');
-title('delta[n]');
+title('FIR Filter of Location Signal, delta[n]');
 xlabel('n');
 ylabel('delta[n]');
 
 subplot(2, 1, 2);
 stem(ln, ones(size(ln)), 'filled');
-title('l[n]');
+title('Location Signal l[n]');
 xlabel('n');
 ylabel('l[n]');
 
@@ -148,7 +148,8 @@ else
 end
 
 
-% Display the result
+%% i) Display the result, check that the HP110v3.png is correct by
+% looking at the barcode digits at the bottom.
 if ~isempty(valid_decode)
     fprintf("Bar code for image %s:\n", img_str);
     disp(valid_decode);
@@ -162,4 +163,5 @@ end
 end % function
 
 upcProcess("HP110v3.png", 8);
+%% j) Process OFFv3.png
 upcProcess("OFFv3.png", 3);
