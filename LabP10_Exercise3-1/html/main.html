@@ -1,0 +1,275 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>FIR Filtering of Images: Lab P-10: 3 Lab Excercise</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-11-25">
+<meta name="DC.source" content="main.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h1>FIR Filtering of Images: Lab P-10: 3 Lab Excercise</h1>
+<!--introduction-->
+<p>Finding Edges: 1-D Filter Cascaded with Nonlinear Operators</p>
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">3.1a)</a>
+</li>
+<li>
+<a href="#2">3.1b)</a>
+</li>
+<li>
+<a href="#3">3.1c)</a>
+</li>
+<li>
+<a href="#4">3.1d)</a>
+</li>
+<li>
+<a href="#5">3.1e)</a>
+</li>
+</ul>
+</div>
+<h2 id="1">3.1a)</h2>
+<pre class="codeinput">
+<span class="comment">% input signal</span>
+xx = 255*(rem(1:159,30)&gt;19);
+
+<span class="comment">% filter coefficients</span>
+bb = [1, -1];
+
+<span class="comment">% implement first-difference filter.</span>
+y = firfilt(xx, bb); <span class="comment">% firfilt() is placed into matlab toolbox</span>
+
+figure(1);
+disp(length(xx));
+
+<span class="comment">% Plot input signal</span>
+subplot(2, 1, 1);
+stem(xx, <span class="string">'filled'</span>);
+title(<span class="string">'Input Signal x[n]'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'x[n]'</span>);
+
+<span class="comment">% Plot output signal</span>
+subplot(2, 1, 2);
+stem(y, <span class="string">'filled'</span>);
+title(<span class="string">'Output Signal y[n]'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'y[n]'</span>);
+</pre>
+<pre class="codeoutput">   159
+
+</pre>
+<img vspace="5" hspace="5" src="main_01.png" alt=""> <h2 id="2">3.1b)</h2>
+<p>The FIR filter y[n] = (1)*x[n] + (-1)*x[n-1] takes the difference between the current and previous data points and this difference indicates whether there is an edge or not. In a flat region there will be no edge as x[n] will be the same as x[n-1]. An edge will appear if there is a large change between the current and previous data point such as transistion between 0 and 255. This FIR filter is essensially a high pass filter.</p>
+<h2 id="3">3.1c)</h2>
+<p>The length of the output signal after convolution will be L = N + M - 1. So in this example N is the length of x[n] (159) and M is the filter length which in this case is 2 which means that the length of y[n] is 159 + 2 - 1 = 160.</p>
+<h2 id="4">3.1d)</h2>
+<p>Use a non linear operator to show where an edge occurs in the signal.</p>
+<pre class="codeinput">
+<span class="comment">% Threshold the output</span>
+threshold = 50; 50
+d = abs(y) &gt; threshold;  <span class="comment">% Sparse output</span>
+</pre>
+<pre class="codeoutput">
+ans =
+
+    50
+
+</pre>
+<h2 id="5">3.1e)</h2>
+<p>this code simplified the output of the filter and shows where the edges occure by plotting a 1 or a 0. The find(d) function will detect the edge just after the transistion. This is due to the way the filter is only using past values for comparison.</p>
+<pre class="codeinput">
+<span class="comment">% Find impulse locations</span>
+locations = find(d);
+
+figure(2);
+
+<span class="comment">% Plot input signal</span>
+subplot(2, 1, 1);
+stem(xx, <span class="string">'filled'</span>);
+title(<span class="string">'Input Signal x[n]'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'x[n]'</span>);
+xlim([1 length(d)]);
+xticks(0:10:length(d));
+
+<span class="comment">% Plot edge locations</span>
+subplot(2, 1, 2);
+stem(locations, ones(size(locations)), <span class="string">'filled'</span>);
+title(<span class="string">'Detected Edge Locations'</span>);
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'Edge Detected'</span>);
+
+<span class="comment">% Ensure both plots use the same x-axis</span>
+xticks(0:10:length(d));
+xlim([1 length(d)]);
+ylim([0 1.2]);
+</pre>
+<img vspace="5" hspace="5" src="main_02.png" alt=""> <p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% FIR Filtering of Images: Lab P-10: 3 Lab Excercise
+% Finding Edges: 1-D Filter Cascaded with Nonlinear Operators
+
+%% 3.1a)
+
+% input signal
+xx = 255*(rem(1:159,30)>19);
+
+% filter coefficients
+bb = [1, -1];
+
+% implement first-difference filter.
+y = firfilt(xx, bb); % firfilt() is placed into matlab toolbox
+
+figure(1);
+disp(length(xx));
+
+% Plot input signal
+subplot(2, 1, 1);
+stem(xx, 'filled');
+title('Input Signal x[n]');
+xlabel('n');
+ylabel('x[n]');
+
+% Plot output signal
+subplot(2, 1, 2);
+stem(y, 'filled');
+title('Output Signal y[n]');
+xlabel('n');
+ylabel('y[n]');
+
+%% 3.1b)
+% The FIR filter y[n] = (1)*x[n] + (-1)*x[n-1] takes the difference 
+% between the current and previous data points and this difference
+% indicates whether there is an edge or not. In a flat region there will 
+% be no edge as x[n] will be the same as x[n-1]. 
+% An edge will appear if there is a large change between the current and
+% previous data point such as transistion between 0 and 255. This FIR
+% filter is essensially a high pass filter.
+
+%% 3.1c)
+% The length of the output signal after convolution will be L = N + M - 1.
+% So in this example N is the length of x[n] (159) and M is the filter 
+% length which in this case is 2 which means that the length of y[n] is
+% 159 + 2 - 1 = 160.
+
+%% 3.1d)
+% Use a non linear operator to show where an edge occurs in the signal.
+
+% Threshold the output
+threshold = 50; 50 
+d = abs(y) > threshold;  % Sparse output
+
+%% 3.1e)
+% this code simplified the output of the filter and shows where the edges
+% occure by plotting a 1 or a 0. The find(d) function will detect the edge
+% just after the transistion. This is due to the way the filter is only
+% using past values for comparison. 
+
+% Find impulse locations
+locations = find(d);
+
+figure(2);
+
+% Plot input signal
+subplot(2, 1, 1);
+stem(xx, 'filled');
+title('Input Signal x[n]');
+xlabel('n');
+ylabel('x[n]');
+xlim([1 length(d)]);
+xticks(0:10:length(d));
+
+% Plot edge locations
+subplot(2, 1, 2);
+stem(locations, ones(size(locations)), 'filled');
+title('Detected Edge Locations');
+xlabel('n');
+ylabel('Edge Detected');
+
+% Ensure both plots use the same x-axis
+xticks(0:10:length(d));
+xlim([1 length(d)]);
+ylim([0 1.2]);
+##### SOURCE END #####
+-->
+</body>
+</html>
