@@ -1,0 +1,426 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>FirFilter_P9_3_2_modified</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2024-12-05"><meta name="DC.source" content="FirFilter_P9_3_2_modified.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">FIR Filters, Cascading Two Systems: Lab P-9 3.2</a></li><li><a href="#2">3.2.2 a</a></li><li><a href="#3">3.2.3</a></li></ul></div><h2 id="1">FIR Filters, Cascading Two Systems: Lab P-9 3.2</h2><p>3.2.1 a</p><pre class="codeinput"><span class="comment">% Parameters</span>
+q32 = 0.9; <span class="comment">% Parameter for FIR Filter-1</span>
+r32 = 0.9; <span class="comment">% Parameter for FIR Filter-2</span>
+M32 = 22;  <span class="comment">% Order of FIR Filter-2</span>
+L = 30; <span class="comment">% Arbitrary plot length;</span>
+
+<span class="comment">% Define the filter coefficients for FIR Filter-1</span>
+b1 =  -q32; <span class="comment">% Filter-1 coefficients</span>
+
+<span class="comment">% Define the filter coefficients for FIR Filter-2</span>
+b2 = r32.^(0:M32); <span class="comment">% Filter-2 coefficients</span>
+
+<span class="comment">% Impulse input</span>
+xn = [1 zeros(1, L)];
+xn_shifted = [0 xn(1:end-1)];
+<span class="comment">% Apply FIR Filter-1 using firfilt</span>
+qxn_1 = firfilt(q32, xn_shifted);
+wn = xn - qxn_1;
+
+<span class="comment">% Apply FIR Filter-2 using firfilt</span>
+yn = firfilt(b2, wn);
+
+<span class="comment">% Note that the deconvolution is imperfect.</span>
+
+<span class="comment">% Plot the impulse response of the overall cascaded system</span>
+figure(1);
+plot((0:L), xn, <span class="string">'LineWidth'</span>, 1.5, <span class="string">"DisplayName"</span>, <span class="string">"Coded"</span>); <span class="comment">% Input</span>
+
+hold <span class="string">on</span>
+plot((0:L), wn, <span class="string">'LineWidth'</span>, 1.5, <span class="string">"DisplayName"</span>, <span class="string">"Coded"</span>); <span class="comment">% Distorted</span>
+stem((0:L), yn(1:L+1), <span class="string">'filled'</span>, <span class="string">'LineWidth'</span>, 1.0); <span class="comment">% Recovered</span>
+xlabel(<span class="string">'n'</span>);
+ylabel(<span class="string">'y[n]'</span>);
+title([<span class="string">'Impulse Response of Cascaded System, q = '</span>, num2str(r32), <span class="string">', M = '</span>, num2str(M32)]);
+legend(<span class="string">"Impulse \delta[n]"</span>, <span class="string">"Distorted impulse w[n]"</span>, <span class="string">"Impulse response h[n]"</span>);
+grid <span class="string">on</span>;
+
+<span class="comment">% 3.2.1 b</span>
+<span class="comment">% w[n] = x[n] - q*x[n-1]</span>
+<span class="comment">%               M</span>
+<span class="comment">% y[n] = sum(r^l * w[n- l])</span>
+<span class="comment">%              l=0</span>
+<span class="comment">% q = 0.9</span>
+<span class="comment">% r = 0.9</span>
+<span class="comment">% M = 22</span>
+<span class="comment">% x[n] = delta[n]</span>
+<span class="comment">% x[n] = { 1, n == 0</span>
+<span class="comment">%             { 0, n != 0</span>
+<span class="comment">% w[n] = [1, -0.9, 0, 0, 0,..., 0]</span>
+<span class="comment">%              22</span>
+<span class="comment">% y[n] = sum(0.9^l * w[n-l])</span>
+<span class="comment">%             l = 0</span>
+<span class="comment">%</span>
+<span class="comment">% y[n] = [1, 0, 0, ..., 0, -0.0886, 0, 0, ...]</span>
+<span class="comment">% y[23] = -0.0886</span>
+<span class="comment">% This is the length of the filter, from l = 0 to M = 22.</span>
+</pre><img vspace="5" hspace="5" src="FirFilter_P9_3_2_modified_01.png" alt=""> <h2 id="2">3.2.2 a</h2><p>Image Processing Load the image matrix from the file</p><pre class="codeinput">load(<span class="string">'echart.mat'</span>);
+
+<span class="comment">% 3.2.2. b</span>
+<span class="comment">% FIR Filter-1: distortion</span>
+<span class="comment">%</span>
+<span class="comment">% Apply FIR Filter-1 along the horizontal direction</span>
+ech_distorted = zeros(size(echart));
+<span class="keyword">for</span> row = 1:size(echart, 1)
+    distorted_row = firfilt(b1, echart(row, :));
+    ech_distorted(row, :) = distorted_row(1:length(echart(row, :)));
+<span class="keyword">end</span>
+
+<span class="comment">% Apply FIR Filter-1 along the vertical direction</span>
+echo90 = zeros(size(ech_distorted));
+<span class="keyword">for</span> col = 1:size(ech_distorted, 2)
+    distorted_col = firfilt(b1, ech_distorted(:, col)');
+    echo90(:, col) = distorted_col(1:length(ech_distorted(:, col)))';
+<span class="keyword">end</span>
+
+<span class="comment">% 3.2.2 c</span>
+<span class="comment">% FIR Filter-2: recovery</span>
+<span class="comment">%</span>
+<span class="comment">% Apply FIR Filter-2 along the horizontal direction</span>
+restored_image = zeros(size(echo90));
+<span class="keyword">for</span> row = 1:size(echo90, 1)
+    restored_row = firfilt(b2, echo90(row, :));
+    restored_image(row, :) = restored_row(1:length(echo90(row, :)));
+<span class="keyword">end</span>
+
+<span class="comment">% Apply FIR Filter-2 along the vertical direction</span>
+<span class="keyword">for</span> col = 1:size(echo90, 2)
+    restored_col = firfilt(b2, echo90(:, col)');
+    restored_image(:, col) = restored_col(1:length(echo90(:, col)))';
+<span class="keyword">end</span>
+
+<span class="comment">% Display the original and restored images side-by-side</span>
+figure(2);
+
+<span class="comment">% restored_image = restored_image / 10;</span>
+
+imshowpair(echart, restored_image, <span class="string">'montage'</span>);
+title([<span class="string">'Original Image (Left) vs Restored Image (Right), r = '</span>, num2str(r32), <span class="string">', M = '</span>, num2str(M32)]);
+
+<span class="comment">% ==========================================</span>
+<span class="comment">% Knowing that the impulse response shows a "ghost" at the length of the deconvolution sum (M+1)</span>
+<span class="comment">% we can predict that such "ghosts" will occur approximately this frequently in real-world signals.</span>
+
+<span class="comment">% With an original value x[23] = 0, the impulse response h[23] = -0.0886 indicates that the remaining</span>
+<span class="comment">% distortion is not necessarily significant in a one-off case, but definitely noticeable in repeated values.</span>
+
+<span class="comment">% The worst-case relative error is approximately 91.8%</span>
+<span class="comment">% ==========================================</span>
+
+
+<span class="comment">% Calculate the difference to find "ghosts"</span>
+difference = abs(echart - round(restored_image ./ 10));
+
+<span class="comment">% Find the worst-case error</span>
+worst_case_error = max(difference(:));
+
+<span class="comment">% Calculate the worst-case relative error as a percentage</span>
+worst_case_relative_error = (worst_case_error / 255) * 100;
+fprintf(<span class="string">'Worst-case relative error: %.2f%%\n'</span>, worst_case_relative_error);
+</pre><pre class="codeoutput">Worst-case relative error: 91.76%
+</pre><img vspace="5" hspace="5" src="FirFilter_P9_3_2_modified_02.png" alt=""> <h2 id="3">3.2.3</h2><p>3.2.3 a</p><pre class="codeinput">r323 = 0.9;
+M323 = 11; <span class="comment">% Tried 11, 22, 33</span>
+<span class="comment">% 11 Looks best because there is less distortion.</span>
+<span class="comment">% This is possibly due to there being fewer iterations from l:M when summing w[n - l],</span>
+<span class="comment">% meaning fewer distortions are "carried forward", resulting in fewer overall</span>
+<span class="comment">% remaining distortions in the recovered signal.</span>
+
+b1_323 =  -q32; <span class="comment">% Filter-1 coefficients</span>
+
+<span class="comment">% Define the filter coefficients for FIR Filter-2</span>
+b2_323 = r323.^(0:M323); <span class="comment">% Filter-2 coefficients</span>
+
+<span class="comment">% FIR Filter-1: distortion</span>
+<span class="comment">%</span>
+<span class="comment">% Apply FIR Filter-1 along the horizontal direction</span>
+ech_distorted2 = zeros(size(echart));
+<span class="keyword">for</span> row = 1:size(echart, 1)
+    distorted_row2 = firfilt(b1_323, echart(row, :));
+    ech_distorted2(row, :) = distorted_row2(1:length(echart(row, :)));
+<span class="keyword">end</span>
+
+<span class="comment">% Apply FIR Filter-1 along the vertical direction</span>
+echo902 = zeros(size(ech_distorted2));
+<span class="keyword">for</span> col = 1:size(ech_distorted2, 2)
+    distorted_co2l = firfilt(b1_323, ech_distorted2(:, col)');
+    echo902(:, col) = distorted_co2l(1:length(ech_distorted2(:, col)))';
+<span class="keyword">end</span>
+
+<span class="comment">% 3.2.2 c</span>
+<span class="comment">% FIR Filter-2: recovery</span>
+<span class="comment">%</span>
+<span class="comment">% Apply FIR Filter-2 along the horizontal direction</span>
+restored_image2 = zeros(size(echo902));
+<span class="keyword">for</span> row = 1:size(echo902, 1)
+    restored_row2 = firfilt(b2_323, echo902(row, :));
+    restored_image2(row, :) = restored_row2(1:length(echo902(row, :)));
+<span class="keyword">end</span>
+
+<span class="comment">% Apply FIR Filter-2 along the vertical direction</span>
+<span class="keyword">for</span> col = 1:size(echo902, 2)
+    restored_col2 = firfilt(b2_323, echo902(:, col)');
+    restored_image2(:, col) = restored_col2(1:length(echo902(:, col)))';
+<span class="keyword">end</span>
+
+<span class="comment">% Display the original and restored images side-by-side</span>
+figure(3);
+
+<span class="comment">% restored_image = restored_image / 10;</span>
+
+imshowpair(echart, restored_image2, <span class="string">'montage'</span>);
+title([<span class="string">'Original Image (Left) vs Restored Image (Right), r = '</span>, num2str(r32), <span class="string">', M = '</span>, num2str(M323)]);
+</pre><img vspace="5" hspace="5" src="FirFilter_P9_3_2_modified_03.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% FIR Filters, Cascading Two Systems: Lab P-9 3.2
+% 3.2.1 a
+
+% Parameters
+q32 = 0.9; % Parameter for FIR Filter-1
+r32 = 0.9; % Parameter for FIR Filter-2
+M32 = 22;  % Order of FIR Filter-2
+L = 30; % Arbitrary plot length;
+
+% Define the filter coefficients for FIR Filter-1
+b1 =  -q32; % Filter-1 coefficients
+
+% Define the filter coefficients for FIR Filter-2
+b2 = r32.^(0:M32); % Filter-2 coefficients
+
+% Impulse input
+xn = [1 zeros(1, L)];
+xn_shifted = [0 xn(1:end-1)];
+% Apply FIR Filter-1 using firfilt
+qxn_1 = firfilt(q32, xn_shifted);
+wn = xn - qxn_1;
+
+% Apply FIR Filter-2 using firfilt
+yn = firfilt(b2, wn);
+
+% Note that the deconvolution is imperfect.
+
+% Plot the impulse response of the overall cascaded system
+figure(1);
+plot((0:L), xn, 'LineWidth', 1.5, "DisplayName", "Coded"); % Input
+
+hold on
+plot((0:L), wn, 'LineWidth', 1.5, "DisplayName", "Coded"); % Distorted
+stem((0:L), yn(1:L+1), 'filled', 'LineWidth', 1.0); % Recovered
+xlabel('n');
+ylabel('y[n]');
+title(['Impulse Response of Cascaded System, q = ', num2str(r32), ', M = ', num2str(M32)]);
+legend("Impulse \delta[n]", "Distorted impulse w[n]", "Impulse response h[n]");
+grid on;
+
+% 3.2.1 b
+% w[n] = x[n] - q*x[n-1]
+%               M
+% y[n] = sum(r^l * w[n- l])
+%              l=0
+% q = 0.9
+% r = 0.9
+% M = 22
+% x[n] = delta[n]  
+% x[n] = { 1, n == 0 
+%             { 0, n != 0
+% w[n] = [1, -0.9, 0, 0, 0,..., 0]
+%              22
+% y[n] = sum(0.9^l * w[n-l])
+%             l = 0
+%
+% y[n] = [1, 0, 0, ..., 0, -0.0886, 0, 0, ...]  
+% y[23] = -0.0886
+% This is the length of the filter, from l = 0 to M = 22. 
+
+%% 3.2.2 a
+% Image Processing
+% Load the image matrix from the file
+load('echart.mat');
+
+% 3.2.2. b
+% FIR Filter-1: distortion
+%
+% Apply FIR Filter-1 along the horizontal direction
+ech_distorted = zeros(size(echart));
+for row = 1:size(echart, 1)
+    distorted_row = firfilt(b1, echart(row, :));
+    ech_distorted(row, :) = distorted_row(1:length(echart(row, :)));
+end
+
+% Apply FIR Filter-1 along the vertical direction
+echo90 = zeros(size(ech_distorted));
+for col = 1:size(ech_distorted, 2)
+    distorted_col = firfilt(b1, ech_distorted(:, col)');
+    echo90(:, col) = distorted_col(1:length(ech_distorted(:, col)))';
+end
+
+% 3.2.2 c
+% FIR Filter-2: recovery
+%
+% Apply FIR Filter-2 along the horizontal direction
+restored_image = zeros(size(echo90));
+for row = 1:size(echo90, 1)
+    restored_row = firfilt(b2, echo90(row, :));
+    restored_image(row, :) = restored_row(1:length(echo90(row, :)));
+end
+
+% Apply FIR Filter-2 along the vertical direction
+for col = 1:size(echo90, 2)
+    restored_col = firfilt(b2, echo90(:, col)');
+    restored_image(:, col) = restored_col(1:length(echo90(:, col)))';
+end
+
+% Display the original and restored images side-by-side
+figure(2);
+
+% restored_image = restored_image / 10;
+
+imshowpair(echart, restored_image, 'montage');
+title(['Original Image (Left) vs Restored Image (Right), r = ', num2str(r32), ', M = ', num2str(M32)]);
+
+% ==========================================
+% Knowing that the impulse response shows a "ghost" at the length of the deconvolution sum (M+1) 
+% we can predict that such "ghosts" will occur approximately this frequently in real-world signals. 
+
+% With an original value x[23] = 0, the impulse response h[23] = -0.0886 indicates that the remaining
+% distortion is not necessarily significant in a one-off case, but definitely noticeable in repeated values.
+
+% The worst-case relative error is approximately 91.8%
+% ==========================================
+
+
+% Calculate the difference to find "ghosts"
+difference = abs(echart - round(restored_image ./ 10));
+
+% Find the worst-case error
+worst_case_error = max(difference(:));
+
+% Calculate the worst-case relative error as a percentage
+worst_case_relative_error = (worst_case_error / 255) * 100;
+fprintf('Worst-case relative error: %.2f%%\n', worst_case_relative_error);
+
+%% 3.2.3
+% 3.2.3 a
+
+r323 = 0.9;
+M323 = 11; % Tried 11, 22, 33
+% 11 Looks best because there is less distortion.
+% This is possibly due to there being fewer iterations from l:M when summing w[n - l],
+% meaning fewer distortions are "carried forward", resulting in fewer overall 
+% remaining distortions in the recovered signal.
+
+b1_323 =  -q32; % Filter-1 coefficients
+
+% Define the filter coefficients for FIR Filter-2
+b2_323 = r323.^(0:M323); % Filter-2 coefficients
+
+% FIR Filter-1: distortion
+%
+% Apply FIR Filter-1 along the horizontal direction
+ech_distorted2 = zeros(size(echart));
+for row = 1:size(echart, 1)
+    distorted_row2 = firfilt(b1_323, echart(row, :));
+    ech_distorted2(row, :) = distorted_row2(1:length(echart(row, :)));
+end
+
+% Apply FIR Filter-1 along the vertical direction
+echo902 = zeros(size(ech_distorted2));
+for col = 1:size(ech_distorted2, 2)
+    distorted_co2l = firfilt(b1_323, ech_distorted2(:, col)');
+    echo902(:, col) = distorted_co2l(1:length(ech_distorted2(:, col)))';
+end
+
+% 3.2.2 c
+% FIR Filter-2: recovery
+%
+% Apply FIR Filter-2 along the horizontal direction
+restored_image2 = zeros(size(echo902));
+for row = 1:size(echo902, 1)
+    restored_row2 = firfilt(b2_323, echo902(row, :));
+    restored_image2(row, :) = restored_row2(1:length(echo902(row, :)));
+end
+
+% Apply FIR Filter-2 along the vertical direction
+for col = 1:size(echo902, 2)
+    restored_col2 = firfilt(b2_323, echo902(:, col)');
+    restored_image2(:, col) = restored_col2(1:length(echo902(:, col)))';
+end
+
+% Display the original and restored images side-by-side
+figure(3);
+
+% restored_image = restored_image / 10;
+
+imshowpair(echart, restored_image2, 'montage');
+title(['Original Image (Left) vs Restored Image (Right), r = ', num2str(r32), ', M = ', num2str(M323)]);
+
+
+##### SOURCE END #####
+--></body></html>
