@@ -1,0 +1,489 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Lab P-9: 3 Lab Exercise</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2024-12-05"><meta name="DC.source" content="main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Lab P-9: 3 Lab Exercise</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">3)</a></li><li><a href="#2">3.1)</a></li><li><a href="#3">3.1a)</a></li><li><a href="#4">3.1b)</a></li><li><a href="#5">3.1.1)</a></li><li><a href="#6">3.1.1a)</a></li><li><a href="#7">3.1.1b)</a></li><li><a href="#8">3.1.1c)</a></li><li><a href="#9">3.1.2)</a></li><li><a href="#10">3.1.2a)</a></li><li><a href="#11">3.1.2b)</a></li><li><a href="#12">3.1.3)</a></li><li><a href="#13">3.1.3a)</a></li><li><a href="#14">3.1.3b)</a></li><li><a href="#15">3.1.3c)</a></li></ul></div><h2 id="1">3)</h2><p>FIR Filters Objectives: 1. Echo: Study how echos ("ghosts" in images) can be produced by FIR    filters. 2. Deconvolution: Study how a FIR filter can (mostly) undo the effects of    another by creating cascading two FIR filters. This process is    deconvolution.</p><h2 id="2">3.1)</h2><p>Implement w[n] = x[n]-0.9x[n-1] using the firfilt() function.</p><pre class="codeinput"><span class="comment">% Clear all previous data for the script.</span>
+clear;
+close <span class="string">all</span>;
+clf;
+
+<span class="comment">% Source toolbox for the script.</span>
+spfirst;
+
+<span class="comment">% Given x[n] as the variable xx below.</span>
+xx = 256*(rem(0:100,50)&lt;10);
+
+<span class="comment">% Seeing w[n] = x[n]-0.9x[n-1] = x[n]*h[n], where h[n] = d[n]-0.9d[n-1]</span>
+<span class="comment">% (d[n] denotes the delta/impulse function). It can be seen that b_{0} = 1</span>
+<span class="comment">% and b_{1} = -0.9.</span>
+
+<span class="comment">% b_{k} coefficients for the FIR filter.</span>
+bb = [1 -0.9];
+
+<span class="comment">% FIR filter function</span>
+ww = firfilt(bb, xx);
+</pre><img vspace="5" hspace="5" src="main_01.png" alt=""> <h2 id="3">3.1a)</h2><pre class="codeinput"><span class="comment">% Time indices for xx in range of 1 (starting index in matlab) to length of</span>
+<span class="comment">% xx (variable x[n]).</span>
+nn_xx = 1:length(xx);
+
+<span class="comment">% Time indices for ww in range of 1 (starting index in matlab) to length of</span>
+<span class="comment">% ww (variable w[n]).</span>
+nn_ww = 1:length(ww);
+
+<span class="comment">% Plot subplots of x[n] and w[n] onto one figure (figure 1). Use xlim to</span>
+<span class="comment">% restrict the horizontal axis to the range 0 &lt;= n &lt;= 75.</span>
+figure(1);
+set(gcf, <span class="string">'Position'</span>, [100, 100, 1400, 1200]); <span class="comment">% Enlargen for HTML file.</span>
+subplot(2,1,1);
+stem(nn_xx,xx(nn_xx));
+title(<span class="string">'x[n] -- Input to FIR Filter'</span>);
+xlim([0 75]);
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'x[n]'</span>)
+subplot(2,1,2);
+stem(nn_ww,ww(nn_ww),<span class="string">'filled'</span>); <span class="comment">%--Make black dots</span>
+title(<span class="string">'w[n] -- Output of FIR Filter'</span>);
+xlim([0 75]);
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'w[n]'</span>)
+
+<span class="comment">% The effect of the filter coefficients is that high frequencies are</span>
+<span class="comment">% allowed to pass. It takes current value (x[n]) and minuses the previous</span>
+<span class="comment">% value (x[n-1]) scaled by 0.9 (0.9*x[n-1]). As seen in the above plot</span>
+<span class="comment">% there is an outlier every n = 1 + 50 indices where w[n] will equal 256</span>
+<span class="comment">% and every n = 11 + 50 indices where w[n] will equal -230.4. This is a</span>
+<span class="comment">% high-pass first-order FIR filter.</span>
+</pre><img vspace="5" hspace="5" src="main_02.png" alt=""> <h2 id="4">3.1b)</h2><pre class="codeinput"><span class="comment">% w[n] is length:</span>
+ww_len = length(ww);
+disp(ww_len);
+
+<span class="comment">% x[n] is length:</span>
+xx_len = length(xx);
+disp(xx_len);
+
+<span class="comment">% FIR filter coefficients (vector bb) is length:</span>
+bb_len = length(bb);
+disp(bb_len);
+
+<span class="comment">% As stated in section 1.2 of the Lab P-9 manual the length of a FIR filter</span>
+<span class="comment">% output using firfilt() will be:</span>
+<span class="comment">% length(firfilt_output) = length(firfilt_input) + length(firfilt_coefficients) - 1</span>
+<span class="comment">% Below is a boolean check to prove this computation:</span>
+display(ww_len == (xx_len + bb_len - 1));
+</pre><pre class="codeoutput">   102
+
+   101
+
+     2
+
+  logical
+
+   1
+
+</pre><h2 id="5">3.1.1)</h2><p>A FIR filter can also be used to restore signals. y[n] = the summation of r^(l)*w[n-l] for l = 0 to M, is a restoration filter that will be explored in this section. Specifically r = 0.9 and M = 22.</p><h2 id="6">3.1.1a)</h2><pre class="codeinput"><span class="comment">% Given variables</span>
+r = 0.9;
+M = 44;
+l = 0:M;
+
+<span class="comment">% In this case r^(l) for zero to M are the coefficients of the FIR filter.</span>
+cc = r.^l;
+
+<span class="comment">% Restoration FIR filter output</span>
+yy = firfilt(cc, ww);
+</pre><h2 id="7">3.1.1b)</h2><pre class="codeinput"><span class="comment">% Time indices for yy in range of 1 (starting index in matlab) to length of</span>
+<span class="comment">% yy (variable y[n]).</span>
+nn_yy = 1:length(yy);
+
+<span class="comment">% Time indices for ww in range of 1 (starting index in matlab) to length of</span>
+<span class="comment">% ww (variable w[n]).</span>
+nn_ww = 1:length(ww);
+
+figure(2);
+set(gcf, <span class="string">'Position'</span>, [100, 100, 1400, 1200]); <span class="comment">% Enlargen for HTML file.</span>
+subplot(2,1,1);
+stem(nn_ww,ww(nn_ww));
+title(<span class="string">'w[n] -- Input to Restoration FIR Filter'</span>);
+xlim([0 75]);
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'w[n]'</span>)
+subplot(2,1,2);
+stem(nn_yy,yy(nn_yy),<span class="string">'filled'</span>); <span class="comment">%--Make black dots</span>
+title(<span class="string">'y[n] -- Output of FIR Filter'</span>);
+xlim([0 75]);
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'y[n]'</span>)
+</pre><img vspace="5" hspace="5" src="main_03.png" alt=""> <h2 id="8">3.1.1c)</h2><pre class="codeinput"><span class="comment">% Plot the difference between y[n] (mostly restored x[n]) and x[n]. Get the</span>
+<span class="comment">% difference in the range 0 &lt;= n &lt; 50.</span>
+n = 1:51;
+error = xx(n) - yy(n);
+
+figure(3);
+set(gcf, <span class="string">'Position'</span>, [100, 100, 1400, 1200]); <span class="comment">% Enlargen for HTML file.</span>
+<span class="comment">%subplot(2,1,1);</span>
+stem(n,error(n));
+title(<span class="string">'Error (difference) between Original Signal x[n] and Restored Signal y[n]'</span>);
+<span class="comment">%xlim([0 75]);</span>
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'Error'</span>)
+</pre><img vspace="5" hspace="5" src="main_04.png" alt=""> <h2 id="9">3.1.2)</h2><p>This section evaluates the worst-case error.</p><h2 id="10">3.1.2a)</h2><pre class="codeinput"><span class="comment">% The maximum error between y[n] and x[n] is:</span>
+disp(max(error));
+</pre><pre class="codeoutput">    2.2344
+
+</pre><h2 id="11">3.1.2b)</h2><p>The maximum error and the plot of the error indicate this y[n] a suboptimal restoration of x[n]. Maximum of the error is ~22.68, meaning y[n] equals ~22.68 when x[n] = 0. Paired with a Mean Average Percent Error is 4.4488.</p><pre class="codeinput"><span class="comment">% Average error</span>
+avg_error = mean(error);
+disp(avg_error);
+</pre><pre class="codeoutput">    0.2629
+
+</pre><h2 id="12">3.1.3)</h2><p>This section develops a FIR filter to be an echo filter. y[n] = x1[n]+rx1[n-P]</p><h2 id="13">3.1.3a)</h2><p>Given an audio signal sampled at frequency fs = 8k Hz make an echo by adding a delayed version to the original. The time delay of the echo should be 0.2 seconds, and the strength should be 90\% of the original. Determine the values r and P (P should be an integer).</p><pre class="codeinput"><span class="comment">% Given sample frequency</span>
+fs = 8000;
+
+<span class="comment">% r should scale so x1 is 90% of its full amplitude.</span>
+r = 0.9;
+
+<span class="comment">% We know the sample rate fs is 8k Hz and P should make it a time delay of</span>
+<span class="comment">% 0.2 seconds.</span>
+P = 0.2 * fs;
+
+<span class="comment">% P is:</span>
+disp(P);
+</pre><pre class="codeoutput">        1600
+
+</pre><h2 id="14">3.1.3b)</h2><p>The coefficients for this FIR filter are: h[n] = 1 for n = 0, 0.9 for n = P, and 0 otherwise.</p><pre class="codeinput"><span class="comment">% Coefficients</span>
+h = zeros(1, P+1);
+h(1) = 1;
+h(P+1) = r;
+</pre><h2 id="15">3.1.3c)</h2><p>Use FIR filter to create an echo using lab data for a speech waveform. Play to prove that the FIR filter produces an echo.</p><pre class="codeinput"><span class="comment">% Load the data (use x2).</span>
+load <span class="string">labdat</span>;
+
+<span class="comment">% Apply the filter for the echo</span>
+y = firfilt(h, x2);
+
+<span class="comment">% Listen to the origin</span>
+<span class="comment">%sound(x2, fs);</span>
+
+<span class="comment">% Listen to the echo version</span>
+sound(y, fs);
+
+<span class="comment">% Time in seconds for x2 plot</span>
+t_x2 = 1:length(x2);
+
+<span class="comment">% Time in seconds for y plot</span>
+t_y = 1:length(y);
+
+figure(4);
+set(gcf, <span class="string">'Position'</span>, [100, 100, 1400, 1200]); <span class="comment">% Enlargen for HTML file.</span>
+subplot(2,1,1);
+plot(t_x2,x2, <span class="string">'blue'</span>);
+title(<span class="string">'x[n] -- Original audio'</span>);
+xlim([0 max(t_x2)]);
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'x[n]'</span>)
+subplot(2,1,2);
+plot(t_y,y,<span class="string">'magenta'</span>);
+title(<span class="string">'y[n] -- Output of Echo FIR Filter: Original Audio with Echo'</span>);
+xlim([0 max(t_x2)]);
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'y[n]'</span>)
+</pre><img vspace="5" hspace="5" src="main_05.png" alt=""> <img vspace="5" hspace="5" src="main_06.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Lab P-9: 3 Lab Exercise
+
+%% 3) 
+% FIR Filters
+% Objectives:
+% 1. Echo: Study how echos ("ghosts" in images) can be produced by FIR 
+%    filters.
+% 2. Deconvolution: Study how a FIR filter can (mostly) undo the effects of 
+%    another by creating cascading two FIR filters. This process is
+%    deconvolution.
+
+%% 3.1)
+% Implement w[n] = x[n]-0.9x[n-1] using the firfilt() function.
+
+% Clear all previous data for the script.
+clear;
+close all;
+clf;
+
+% Source toolbox for the script.
+spfirst;
+
+% Given x[n] as the variable xx below.
+xx = 256*(rem(0:100,50)<10);
+
+% Seeing w[n] = x[n]-0.9x[n-1] = x[n]*h[n], where h[n] = d[n]-0.9d[n-1] 
+% (d[n] denotes the delta/impulse function). It can be seen that b_{0} = 1
+% and b_{1} = -0.9.
+
+% b_{k} coefficients for the FIR filter.
+bb = [1 -0.9];
+
+% FIR filter function
+ww = firfilt(bb, xx);
+
+%% 3.1a) 
+
+% Time indices for xx in range of 1 (starting index in matlab) to length of
+% xx (variable x[n]).
+nn_xx = 1:length(xx);
+
+% Time indices for ww in range of 1 (starting index in matlab) to length of
+% ww (variable w[n]).
+nn_ww = 1:length(ww);
+
+% Plot subplots of x[n] and w[n] onto one figure (figure 1). Use xlim to 
+% restrict the horizontal axis to the range 0 <= n <= 75.
+figure(1);
+set(gcf, 'Position', [100, 100, 1400, 1200]); % Enlargen for HTML file.
+subplot(2,1,1);
+stem(nn_xx,xx(nn_xx));
+title('x[n] REPLACE_WITH_DASH_DASH Input to FIR Filter');
+xlim([0 75]);
+xlabel('n')
+ylabel('x[n]')
+subplot(2,1,2);
+stem(nn_ww,ww(nn_ww),'filled'); %REPLACE_WITH_DASH_DASHMake black dots
+title('w[n] REPLACE_WITH_DASH_DASH Output of FIR Filter');
+xlim([0 75]);
+xlabel('n')
+ylabel('w[n]')
+
+% The effect of the filter coefficients is that high frequencies are
+% allowed to pass. It takes current value (x[n]) and minuses the previous 
+% value (x[n-1]) scaled by 0.9 (0.9*x[n-1]). As seen in the above plot
+% there is an outlier every n = 1 + 50 indices where w[n] will equal 256
+% and every n = 11 + 50 indices where w[n] will equal -230.4. This is a
+% high-pass first-order FIR filter.
+
+%% 3.1b)
+
+% w[n] is length:
+ww_len = length(ww);
+disp(ww_len);
+
+% x[n] is length:
+xx_len = length(xx);
+disp(xx_len);
+
+% FIR filter coefficients (vector bb) is length:
+bb_len = length(bb);
+disp(bb_len);
+
+% As stated in section 1.2 of the Lab P-9 manual the length of a FIR filter
+% output using firfilt() will be:
+% length(firfilt_output) = length(firfilt_input) + length(firfilt_coefficients) - 1
+% Below is a boolean check to prove this computation:
+display(ww_len == (xx_len + bb_len - 1));
+
+%% 3.1.1)
+% A FIR filter can also be used to restore signals. y[n] = the summation of
+% r^(l)*w[n-l] for l = 0 to M, is a restoration filter that will be
+% explored in this section. Specifically r = 0.9 and M = 22.
+
+%% 3.1.1a)
+
+% Given variables
+r = 0.9;
+M = 44;
+l = 0:M;
+
+% In this case r^(l) for zero to M are the coefficients of the FIR filter.
+cc = r.^l;
+
+% Restoration FIR filter output
+yy = firfilt(cc, ww);
+
+%% 3.1.1b)
+
+% Time indices for yy in range of 1 (starting index in matlab) to length of
+% yy (variable y[n]).
+nn_yy = 1:length(yy);
+
+% Time indices for ww in range of 1 (starting index in matlab) to length of
+% ww (variable w[n]).
+nn_ww = 1:length(ww);
+
+figure(2);
+set(gcf, 'Position', [100, 100, 1400, 1200]); % Enlargen for HTML file.
+subplot(2,1,1);
+stem(nn_ww,ww(nn_ww));
+title('w[n] REPLACE_WITH_DASH_DASH Input to Restoration FIR Filter');
+xlim([0 75]);
+xlabel('n')
+ylabel('w[n]')
+subplot(2,1,2);
+stem(nn_yy,yy(nn_yy),'filled'); %REPLACE_WITH_DASH_DASHMake black dots
+title('y[n] REPLACE_WITH_DASH_DASH Output of FIR Filter');
+xlim([0 75]);
+xlabel('n')
+ylabel('y[n]')
+
+%% 3.1.1c)
+
+% Plot the difference between y[n] (mostly restored x[n]) and x[n]. Get the
+% difference in the range 0 <= n < 50.
+n = 1:51;
+error = xx(n) - yy(n);
+
+figure(3);
+set(gcf, 'Position', [100, 100, 1400, 1200]); % Enlargen for HTML file.
+%subplot(2,1,1);
+stem(n,error(n));
+title('Error (difference) between Original Signal x[n] and Restored Signal y[n]');
+%xlim([0 75]);
+xlabel('n')
+ylabel('Error')
+
+%% 3.1.2)
+% This section evaluates the worst-case error.
+
+%% 3.1.2a)
+
+% The maximum error between y[n] and x[n] is:
+disp(max(error));
+
+%% 3.1.2b)
+% The maximum error and the plot of the error indicate this y[n] a 
+% suboptimal restoration of x[n]. Maximum of the error is ~22.68, meaning
+% y[n] equals ~22.68 when x[n] = 0. Paired with a Mean Average Percent
+% Error is 4.4488.
+
+% Average error
+avg_error = mean(error);
+disp(avg_error);
+
+%% 3.1.3)
+% This section develops a FIR filter to be an echo filter.
+% y[n] = x1[n]+rx1[n-P]
+
+%% 3.1.3a)
+% Given an audio signal sampled at frequency fs = 8k Hz make an echo by 
+% adding a delayed version to the original. The time delay of the echo should
+% be 0.2 seconds, and the strength should be 90\% of the original. Determine
+% the values r and P (P should be an integer).
+
+% Given sample frequency
+fs = 8000;
+
+% r should scale so x1 is 90% of its full amplitude.
+r = 0.9;
+
+% We know the sample rate fs is 8k Hz and P should make it a time delay of
+% 0.2 seconds.
+P = 0.2 * fs;
+
+% P is:
+disp(P);
+
+%% 3.1.3b)
+% The coefficients for this FIR filter are:
+% h[n] = 1 for n = 0, 0.9 for n = P, and 0 otherwise.
+
+% Coefficients
+h = zeros(1, P+1);
+h(1) = 1;
+h(P+1) = r;
+
+%% 3.1.3c)
+% Use FIR filter to create an echo using lab data for a speech waveform.
+% Play to prove that the FIR filter produces an echo.
+ 
+% Load the data (use x2).
+load labdat;
+
+% Apply the filter for the echo
+y = firfilt(h, x2);
+
+% Listen to the origin
+%sound(x2, fs);
+
+% Listen to the echo version
+sound(y, fs);
+
+% Time in seconds for x2 plot
+t_x2 = 1:length(x2);
+
+% Time in seconds for y plot
+t_y = 1:length(y);
+
+figure(4);
+set(gcf, 'Position', [100, 100, 1400, 1200]); % Enlargen for HTML file.
+subplot(2,1,1);
+plot(t_x2,x2, 'blue');
+title('x[n] REPLACE_WITH_DASH_DASH Original audio');
+xlim([0 max(t_x2)]);
+xlabel('n')
+ylabel('x[n]')
+subplot(2,1,2);
+plot(t_y,y,'magenta');
+title('y[n] REPLACE_WITH_DASH_DASH Output of Echo FIR Filter: Original Audio with Echo');
+xlim([0 max(t_x2)]);
+xlabel('n')
+ylabel('y[n]')
+##### SOURCE END #####
+--></body></html>
